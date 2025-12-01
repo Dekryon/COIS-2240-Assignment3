@@ -6,6 +6,12 @@ public class Minibus extends Vehicle implements Rentable {
         this.isAccessible = isAccessible;
     }
 
+    // new constructor used when loading from file
+    public Minibus(String licensePlate, String make, String model, int year) {
+        this(make, model, year, false); // default accessibility
+        setLicensePlate(licensePlate);
+    }
+
     @Override
     public String getInfo() {
         return super.getInfo() + " | Accessible: " + (isAccessible ? "Yes" : "No");

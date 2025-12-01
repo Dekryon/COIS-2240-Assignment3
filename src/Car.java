@@ -6,6 +6,12 @@ public class Car extends Vehicle implements Rentable {
         this.numSeats = numSeats;
     }
 
+    // new constructor used when loading from file
+    public Car(String licensePlate, String make, String model, int year) {
+        this(make, model, year, 4); // default seats
+        setLicensePlate(licensePlate);
+    }
+
     public int getNumSeats() {
         return numSeats;
     }
