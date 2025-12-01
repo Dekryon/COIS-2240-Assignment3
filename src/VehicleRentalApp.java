@@ -18,55 +18,61 @@ public class VehicleRentalApp {
             scanner.nextLine();
 
             switch (choice) {
-                case 1:
-                    System.out.println("  1: Car\n" + 
-                                       "  2: Minibus\n" + 
-                                       "  3: Pickup Truck");
-                    int type = scanner.nextInt();
+            case 1:
+                System.out.println("  1: Car\n" + 
+                                   "  2: Minibus\n" + 
+                                   "  3: Pickup Truck");
+                int type = scanner.nextInt();
+                scanner.nextLine();
+
+                System.out.print("Enter license plate: ");
+                String plate = scanner.nextLine();   // do not uppercase here
+
+                System.out.print("Enter make: ");
+                String make = scanner.nextLine();
+                System.out.print("Enter model: ");
+                String model = scanner.nextLine();
+                System.out.print("Enter year: ");
+                int year = scanner.nextInt();
+                scanner.nextLine();
+
+                Vehicle vehicle;
+                if (type == 1) {
+                    System.out.print("Enter number of seats: ");
+                    int seats = scanner.nextInt();
+                    vehicle = new Car(make, model, year, seats);
+                } else if (type == 2) {
+                    System.out.print("Is accessible? (true/false): ");
+                    boolean isAccessible = scanner.nextBoolean();
+                    vehicle = new Minibus(make, model, year, isAccessible);
+                } else if (type == 3) {
+                    System.out.print("Enter the cargo size: ");
+                    double cargoSize = scanner.nextDouble();
                     scanner.nextLine();
+                    System.out.print("Has trailer? (true/false): ");
+                    boolean hasTrailer = scanner.nextBoolean();
+                    vehicle = new PickupTruck(make, model, year, cargoSize, hasTrailer);
+                } else {
+                    vehicle = null;
+                }
 
-                    System.out.print("Enter license plate: ");
-                    String plate = scanner.nextLine().toUpperCase();
-                    System.out.print("Enter make: ");
-                    String make = scanner.nextLine();
-                    System.out.print("Enter model: ");
-                    String model = scanner.nextLine();
-                    System.out.print("Enter year: ");
-                    int year = scanner.nextInt();
-                    scanner.nextLine();
-
-                    Vehicle vehicle;
-                    if (type == 1) {
-                        System.out.print("Enter number of seats: ");
-                        int seats = scanner.nextInt();
-                        vehicle = new Car(make, model, year, seats);
-                    } else if (type == 2) {
-                        System.out.print("Is accessible? (true/false): ");
-                        boolean isAccessible = scanner.nextBoolean();
-                        vehicle = new Minibus(make, model, year, isAccessible);
-                    } else if (type == 3) {
-                        System.out.print("Enter the cargo size: ");
-                        double cargoSize = scanner.nextDouble();
-                        scanner.nextLine();
-                        System.out.print("Has trailer? (true/false): ");
-                        boolean hasTrailer = scanner.nextBoolean();
-                        vehicle = new PickupTruck(make, model, year, cargoSize, hasTrailer);
-                    } else {
-                        vehicle = null;
-                    }
-
-                    if (vehicle != null) {
-                        vehicle.setLicensePlate(plate);
+                if (vehicle != null) {
+                    try {
+                        vehicle.setLicensePlate(plate);  // may throw if invalid
                         boolean added = rentalSystem.addVehicle(vehicle);
                         if (added) {
                             System.out.println("Vehicle added successfully.");
                         } else {
                             System.out.println("Vehicle was not added (duplicate license plate).");
                         }
-                    } else {
-                        System.out.println("Vehicle not added successfully.");
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Error: " + e.getMessage());
+                        System.out.println("Vehicle was not added.");
                     }
-                    break;
+                } else {
+                    System.out.println("Vehicle not added successfully.");
+                }
+                break;
 
                 case 2:
                     System.out.print("Enter customer ID: ");
