@@ -3,9 +3,26 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class RentalSystem {
+
+    // 1) Static instance field for the Singleton
+    private static RentalSystem instance;
+
     private List<Vehicle> vehicles = new ArrayList<>();
     private List<Customer> customers = new ArrayList<>();
     private RentalHistory rentalHistory = new RentalHistory();
+
+    // 2) Private constructor so no one can do "new RentalSystem()"
+    private RentalSystem() {
+        // later you'll call loadData() from here in Task 1.3
+    }
+
+    // 3) Public static access method to get the single instance
+    public static RentalSystem getInstance() {
+        if (instance == null) {
+            instance = new RentalSystem();
+        }
+        return instance;
+    }
 
     public void addVehicle(Vehicle vehicle) {
         vehicles.add(vehicle);
@@ -38,18 +55,16 @@ public class RentalSystem {
     }    
 
     public void displayVehicles(Vehicle.VehicleStatus status) {
-        // Display appropriate title based on status
         if (status == null) {
             System.out.println("\n=== All Vehicles ===");
         } else {
             System.out.println("\n=== " + status + " Vehicles ===");
         }
-        
-        // Header with proper column widths
+
         System.out.printf("|%-16s | %-12s | %-12s | %-12s | %-6s | %-18s |%n", 
             " Type", "Plate", "Make", "Model", "Year", "Status");
         System.out.println("|--------------------------------------------------------------------------------------------|");
-    	  
+
         boolean found = false;
         for (Vehicle vehicle : vehicles) {
             if (status == null || vehicle.getStatus() == status) {
@@ -88,7 +103,6 @@ public class RentalSystem {
         if (rentalHistory.getRentalHistory().isEmpty()) {
             System.out.println("  No rental history found.");
         } else {
-            // Header with proper column widths
             System.out.printf("|%-10s | %-12s | %-20s | %-12s | %-12s |%n", 
                 " Type", "Plate", "Customer", "Date", "Amount");
             System.out.println("|-------------------------------------------------------------------------------|");
