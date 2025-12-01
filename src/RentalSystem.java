@@ -115,7 +115,7 @@ public class RentalSystem {
             System.out.println("Vehicle is not available for renting.");
             return false;
         }
-    }
+    }       
 
     public boolean returnVehicle(Vehicle vehicle, Customer customer, LocalDate date, double extraFees) {
         if (vehicle.getStatus() == Vehicle.VehicleStatus.Rented) {
@@ -130,8 +130,8 @@ public class RentalSystem {
         } else {
             System.out.println("Vehicle is not rented.");
             return false;
-        }
-    }
+        }          
+    }       
   
     public void displayVehicles(Vehicle.VehicleStatus status) {
         if (status == null) {
