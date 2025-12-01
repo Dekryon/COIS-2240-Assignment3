@@ -1,11 +1,20 @@
 import java.util.List;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
+
 
 public class RentalSystem {
 
     // 1) Static instance field for the Singleton
     private static RentalSystem instance;
+    
+    private static final String VEHICLES_FILE = "vehicles.txt";
+    private static final String CUSTOMERS_FILE = "customers.txt";
+    private static final String RECORDS_FILE = "rental_records.txt";
+
 
     private List<Vehicle> vehicles = new ArrayList<>();
     private List<Customer> customers = new ArrayList<>();
@@ -15,6 +24,57 @@ public class RentalSystem {
     private RentalSystem() {
         // later you'll call loadData() from here in Task 1.3
     }
+    
+    private void saveVehicle(Vehicle vehicle) {
+        try (FileWriter fw = new FileWriter(VEHICLES_FILE, true);
+             PrintWriter out = new PrintWriter(fw)) {
+
+            // plate,make,model,year,type
+            out.println(
+                vehicle.getLicensePlate() + "," +
+                vehicle.getMake() + "," +
+                vehicle.getModel() + "," +
+                vehicle.getYear() + "," +
+                vehicle.getClass().getSimpleName()
+            );
+        } catch (IOException e) {
+            System.out.println("Error saving vehicle: " + e.getMessage());
+        }
+    }
+    
+    private void saveCustomer(Customer customer) {
+        try (FileWriter fw = new FileWriter(CUSTOMERS_FILE, true);
+             PrintWriter out = new PrintWriter(fw)) {
+
+            // id,name
+            out.println(
+                customer.getCustomerId() + "," +
+                customer.getCustomerName()
+            );
+        } catch (IOException e) {
+            System.out.println("Error saving customer: " + e.getMessage());
+        }
+    }
+    
+    private void saveRecord(RentalRecord record) {
+        try (FileWriter fw = new FileWriter(RECORDS_FILE, true);
+             PrintWriter out = new PrintWriter(fw)) {
+
+            // type,plate,customerName,date,amount
+            out.println(
+                record.getRecordType() + "," +
+                record.getVehicle().getLicensePlate() + "," +
+                record.getCustomer().getCustomerName() + "," +
+                record.getRecordDate().toString() + "," +
+                record.getTotalAmount()
+            );
+        } catch (IOException e) {
+            System.out.println("Error saving rental record: " + e.getMessage());
+        }
+    }
+
+
+
 
     // 3) Public static access method to get the single instance
     public static RentalSystem getInstance() {
@@ -26,16 +86,20 @@ public class RentalSystem {
 
     public void addVehicle(Vehicle vehicle) {
         vehicles.add(vehicle);
+        saveVehicle(vehicle);
     }
 
     public void addCustomer(Customer customer) {
         customers.add(customer);
+        saveCustomer(customer);
     }
 
     public void rentVehicle(Vehicle vehicle, Customer customer, LocalDate date, double amount) {
         if (vehicle.getStatus() == Vehicle.VehicleStatus.Available) {
             vehicle.setStatus(Vehicle.VehicleStatus.Rented);
-            rentalHistory.addRecord(new RentalRecord(vehicle, customer, date, amount, "RENT"));
+            RentalRecord record = new RentalRecord(vehicle, customer, date, amount, "RENT");
+            rentalHistory.addRecord(record);
+            saveRecord(record);
             System.out.println("Vehicle rented to " + customer.getCustomerName());
         }
         else {
@@ -46,7 +110,7 @@ public class RentalSystem {
     public void returnVehicle(Vehicle vehicle, Customer customer, LocalDate date, double extraFees) {
         if (vehicle.getStatus() == Vehicle.VehicleStatus.Rented) {
             vehicle.setStatus(Vehicle.VehicleStatus.Available);
-            rentalHistory.addRecord(new RentalRecord(vehicle, customer, date, extraFees, "RETURN"));
+            RentalRecord record = new RentalRecord(vehicle, customer, date, extraFees, "RETURN");
             System.out.println("Vehicle returned by " + customer.getCustomerName());
         }
         else {
