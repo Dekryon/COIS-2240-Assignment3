@@ -1,5 +1,8 @@
 import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+
 
 import org.junit.jupiter.api.Test;
 
@@ -49,4 +52,23 @@ public class VehicleRentalTest {
         boolean secondReturn = system.returnVehicle(vehicle, customer, today, 0.0);
         assertFalse(secondReturn);
     }
+    
+    @Test
+    public void testSingletonRentalSystem() throws Exception {
+        // Get the no-arg constructor
+        Constructor<RentalSystem> constructor = RentalSystem.class.getDeclaredConstructor();
+
+        // Check that the constructor is PRIVATE
+        int modifiers = constructor.getModifiers();
+        assertTrue(Modifier.isPrivate(modifiers));
+
+        // getInstance should return a non-null instance
+        RentalSystem system1 = RentalSystem.getInstance();
+        assertNotNull(system1);
+
+        // getInstance should always return the same instance
+        RentalSystem system2 = RentalSystem.getInstance();
+        assertSame(system1, system2);
+    }
+
 }
